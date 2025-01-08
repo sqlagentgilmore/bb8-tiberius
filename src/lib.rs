@@ -12,7 +12,7 @@ pub trait IntoConfig {
     fn into_config(self) -> tiberius::Result<tiberius::Config>;
 }
 
-impl<'a> IntoConfig for &'a str {
+impl IntoConfig for &str {
     fn into_config(self) -> tiberius::Result<tiberius::Config> {
         tiberius::Config::from_ado_string(self)
     }
@@ -25,6 +25,7 @@ impl IntoConfig for tiberius::Config {
 }
 
 /// Implements `bb8::ManageConnection`
+#[allow(clippy::type_complexity)]
 pub struct ConnectionManager {
     config: tiberius::Config,
     #[cfg(feature = "with-tokio")]
@@ -191,14 +192,12 @@ pub mod rt {
     }
 }
 
-
-#[async_trait::async_trait]
 impl bb8::ManageConnection for ConnectionManager {
     type Connection = rt::Client;
     type Error = Error;
 
     async fn connect(&self) -> Result<Self::Connection, Self::Error> {
-        Ok(self.connect_inner().await?)
+        self.connect_inner().await
     }
 
     async fn is_valid(&self, conn: &mut Self::Connection) -> Result<(), Self::Error> {
