@@ -46,7 +46,7 @@ impl ConnectionManager {
             config,
             modify_tcp_stream: Box::new(|tcp_stream| tcp_stream.set_nodelay(true)),
             #[cfg(feature = "sql-browser")]
-            use_named_connection: false
+            use_named_connection: false,
         }
     }
 
